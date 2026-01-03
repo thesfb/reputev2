@@ -10,10 +10,10 @@ import { create, mplCore } from "@metaplex-foundation/mpl-core";
 import * as snarkjs from "snarkjs";
 import vKey from "@/lib/zk/verification_key.json"; 
 
-const USED_NULLIFIERS = new Set<string>();
+const USED_NULLIFIERS = new Set<string>();   
 
 // Ensure this matches your uploaded Metadata URL
-const METADATA_URI = "https://raw.githubusercontent.com/thesfb/repute-assets/refs/heads/main/metadata.json";
+const METADATA_URI = "https://raw.githubusercontent.com/thesfb/reputev2/refs/heads/main/frontend/metadata.json";
 
 export async function POST(req: Request) {
   console.log("------------------------------------------");
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
 
     // 3. Manual Polling Loop (Bypasses WebSocket Crash)
     let confirmed = false;
-    for (let i = 0; i < 30; i++) { // Try for 30 seconds
+    for (let i = 0; i < 60; i++) { // Try for 30 seconds
       const statuses = await umi.rpc.getSignatureStatuses([signature]);
       const status = statuses[0];
 
