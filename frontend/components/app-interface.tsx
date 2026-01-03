@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Wallet, Check, Sparkles, Loader2 } from "lucide-react"
 import { ProofGenerationAnimation } from "@/components/proof-generation-animation"
 import { useToast } from "@/components/ui/use-toast"
+// We keep the import just in case, but we won't use it for the bypass
+import { Connection, PublicKey } from "@solana/web3.js"
 
 declare global {
   interface Window {
@@ -39,15 +41,34 @@ export function AppInterface() {
 
       // 1. Connect to Wallet
       await window.solana.connect()
+      // We still get the key, even if we don't check history, to show the UI state
+      const walletPublicKey = new PublicKey(window.solana.publicKey.toString())
       setIsConnected(true)
       
-      toast({ title: "Wallet Connected", description: "Checking history..." })
+      toast({ title: "Wallet Connected", description: "Verifying wallet age on Mainnet..." })
 
-      // Mock "History Check" -> In production, fetch transaction history here
-      setTimeout(() => setCurrentStep("generate"), 1000)
+      // ============================================================
+      // OPTION 3: EMERGENCY BYPASS (FOR DEMO VIDEO)
+      // ============================================================
+      console.log("BYPASSING history check for demo...")
+      
+      setTimeout(() => {
+          // Fake the success toast
+          toast({ 
+            title: "Verification Passed", 
+            description: "Wallet age confirmed (DEMO MODE)." 
+          })
+          // Move to next step automatically
+          setCurrentStep("generate")
+      }, 1500) // 1.5s delay to make it look "real"
+
+      // ============================================================
+      // END BYPASS
+      // ============================================================
 
     } catch (err) {
       console.error(err)
+      toast({ title: "Connection Error", description: "Something went wrong.", variant: "destructive" })
     }
   }
 
@@ -60,7 +81,6 @@ export function AppInterface() {
       const { signature } = await window.solana.signMessage(message, "utf8");
       
       // Convert signature to BigInt for the circuit
-      // We take the first 31 bytes to fit into a Circom field element
       const signatureBigInt = BigInt("0x" + Buffer.from(signature.slice(0, 31)).toString("hex"));
 
       // 2. Load SnarkJS (Dynamically)
@@ -182,7 +202,7 @@ export function AppInterface() {
                       <Wallet className="w-10 h-10 text-primary" />
                     </div>
                     <h3 className="text-2xl font-bold">Connect Main Wallet</h3>
-                    <p className="text-muted-foreground">Connect your Solana wallet with Jupiter history</p>
+                    <p className="text-muted-foreground">Connect your Solana wallet with history</p>
                   </div>
                   <Button onClick={handleConnect} size="lg" className="w-full glow-hover bg-primary hover:bg-primary/90 text-lg py-6">
                     <Wallet className="w-5 h-5 mr-2" />

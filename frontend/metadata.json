@@ -1,0 +1,12 @@
+{
+  "name": "Jupiter Power User",
+  "symbol": "REP",
+  "description": "Verified reputation proof for holding a wallet active before the snapshot.",
+  "image": "https://raw.githubusercontent.com/thesfb/reputev2/refs/heads/main/badge.png",
+  "attributes": [
+    {
+      "trait_type": "Verification",
+      "value": "ZK Proof"
+    }
+  ]
+}
