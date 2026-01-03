@@ -1,2 +1,6 @@
 .next/
-node_moudules/
+node_modules/
+
+
+.env
+
