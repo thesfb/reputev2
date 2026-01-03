@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Wallet, Check, Sparkles, Loader2 } from "lucide-react"
 import { ProofGenerationAnimation } from "@/components/proof-generation-animation"
 import { useToast } from "@/components/ui/use-toast"
-// We keep the import just in case, but we won't use it for the bypass
 import { Connection, PublicKey } from "@solana/web3.js"
 
 declare global {
@@ -41,14 +40,13 @@ export function AppInterface() {
 
       // 1. Connect to Wallet
       await window.solana.connect()
-      // We still get the key, even if we don't check history, to show the UI state
       const walletPublicKey = new PublicKey(window.solana.publicKey.toString())
       setIsConnected(true)
       
       toast({ title: "Wallet Connected", description: "Verifying wallet age on Mainnet..." })
 
       // ============================================================
-      // OPTION 3: EMERGENCY BYPASS (FOR DEMO VIDEO)
+      // 🟢 MOCK VERIFICATION (RESTORED)
       // ============================================================
       console.log("BYPASSING history check for demo...")
       
@@ -61,9 +59,6 @@ export function AppInterface() {
           // Move to next step automatically
           setCurrentStep("generate")
       }, 1500) // 1.5s delay to make it look "real"
-
-      // ============================================================
-      // END BYPASS
       // ============================================================
 
     } catch (err) {

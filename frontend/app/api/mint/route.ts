@@ -87,7 +87,7 @@ export async function POST(req: Request) {
 
     // 3. Manual Polling Loop (Bypasses WebSocket Crash)
     let confirmed = false;
-    for (let i = 0; i < 60; i++) { // Try for 30 seconds
+    for (let i = 0; i < 30; i++) { // Try for 30 seconds
       const statuses = await umi.rpc.getSignatureStatuses([signature]);
       const status = statuses[0];
 
