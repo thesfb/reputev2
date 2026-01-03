@@ -8,12 +8,10 @@ import {
 } from "@metaplex-foundation/umi";
 import { create, mplCore } from "@metaplex-foundation/mpl-core";
 import * as snarkjs from "snarkjs";
-// We import the key directly to avoid filesystem issues in serverless environments
+// Ensure you have moved the verification_key.json to this path
 import vKey from "@/lib/zk/verification_key.json"; 
 
-// --- CONFIGURATION ---
-// In a real app, use a database (Redis/Postgres) for nullifiers.
-// For this hackathon demo, we use an in-memory Set (resets on server restart).
+// MOCK DATABASE: Resets when server restarts. Use Redis in production.
 const USED_NULLIFIERS = new Set<string>();
 
 export async function POST(req: Request) {
@@ -24,24 +22,22 @@ export async function POST(req: Request) {
     // 1. Validate Inputs
     if (!proof || !publicSignals || !destinationAddress) {
       return NextResponse.json(
-        { error: "Missing required fields: proof, publicSignals, or destinationAddress" }, 
+        { error: "Missing required fields" }, 
         { status: 400 }
       );
     }
 
-    // publicSignals[0] is the nullifierHash (output of our circuit)
     const nullifierHash = publicSignals[0];
 
     // 2. Prevent Double-Spending
     if (USED_NULLIFIERS.has(nullifierHash)) {
       return NextResponse.json(
-        { error: "This reputation has already been ported!" }, 
+        { error: "Reputation already ported (Nullifier used)" }, 
         { status: 400 }
       );
     }
 
-    // 3. Verify the ZK Proof
-    // snarkjs.groth16.verify(vKey, publicSignals, proof)
+    // 3. Verify ZK Proof
     const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof);
 
     if (!verified) {
@@ -49,22 +45,22 @@ export async function POST(req: Request) {
     }
 
     // 4. Initialize Solana Relayer
-    // Note: RELAYER_PRIVATE_KEY must be a JSON array string in .env: "[23, 111, ...]"
     if (!process.env.RELAYER_PRIVATE_KEY) {
       throw new Error("RELAYER_PRIVATE_KEY is not defined in .env");
     }
 
-    const rpcUrl = process.env.RPC_URL || "https://api.devnet.solana.com";
+    // Connect to RPC (Localhost or Devnet)
+    const rpcUrl = process.env.RPC_URL || "http://127.0.0.1:8899";
     const umi = createUmi(rpcUrl).use(mplCore());
 
+    // Load Relayer Wallet
     const relayerKeypair = umi.eddsa.createKeypairFromSecretKey(
       new Uint8Array(JSON.parse(process.env.RELAYER_PRIVATE_KEY))
     );
     const relayerSigner = createSignerFromKeypair(umi, relayerKeypair);
     umi.use(signerIdentity(relayerSigner));
 
-    // 5. Mint the Soulbound Badge (MPL-Core Asset)
-    // We generate a new signer for the Asset itself
+    // 5. Mint Soulbound Badge (Optimized for Speed)
     const assetSigner = generateSigner(umi);
 
     console.log(`Minting badge to ${destinationAddress}...`);
@@ -72,15 +68,21 @@ export async function POST(req: Request) {
     const tx = await create(umi, {
       asset: assetSigner,
       name: "Repute: Jupiter Power User",
-      uri: "https://example.com/metadata.json", // TODO: Replace with your actual metadata URL
-      owner: publicKey(destinationAddress), // Sent to the user's fresh wallet
-    }).sendAndConfirm(umi);
+      uri: "https://shdw-drive.genesysgo.net/6K.../metadata.json", // Replace with your metadata
+      owner: publicKey(destinationAddress), 
+    }).sendAndConfirm(umi, { 
+      send: { 
+        skipPreflight: true, // Don't simulate, just send
+      }, 
+      confirm: { 
+        commitment: 'processed', // Fastest confirmation (fixes the timeout issue)
+      } 
+    });
 
     // 6. Record Nullifier as Used
     USED_NULLIFIERS.add(nullifierHash);
 
     // 7. Return Success
-    // We convert the signature (Uint8Array) to a string for the response
     const signature = Buffer.from(tx.signature).toString('hex');
 
     return NextResponse.json({ 
