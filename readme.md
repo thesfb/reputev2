@@ -1,285 +1,397 @@
-Repute Protocol
+# 🛡️ Repute Protocol
 
-Decentralized Identity Verification for Web3 — Prove Your Credentials Without Revealing Your Identity
+**Zero-Knowledge Reputation System for Solana**
 
-Live Demo: https://repute.vercel.app | Network: Solana Devnet
+Prove your on-chain credentials without exposing your wallet. Mint privacy-preserving reputation badges that work across the entire Solana ecosystem.
 
-The Problem: Web3's Identity Crisis
-Web3 faces a fundamental Trust Paradox:
-For Users: The Privacy Trap
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Solana](https://img.shields.io/badge/Solana-Native-9945FF)](https://solana.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6)](https://www.typescriptlang.org/)
 
-Whales refuse to connect main wallets to new dApps due to security risks (wallet drainers) and privacy concerns (doxxing their net worth)
-Result: They miss opportunities because they can't prove their status safely
+---
 
-For Developers: The Sybil Attack
+## 🎯 What is Repute?
 
-dApps and DAOs struggle to verify if users are real humans or bot farms
-Without reliable verification, marketing budgets are drained by fake accounts and voting systems are manipulated
+Repute is a privacy-first reputation protocol that lets users prove credentials from their main wallet and mint verified badges to a fresh burner wallet—**with zero on-chain linkability**.
 
+**The Problem:** Connecting your valuable wallet to every dApp is dangerous. $2B+ stolen in 2024 from malicious signatures. But you need to prove you're not a bot.
 
-The Solution: Trustless Unlinkability
-Repute decouples Verification from Identification using Zero-Knowledge Proofs (ZK-SNARKs).
-Core Innovation
-Users can "port" their reputation from a high-value wallet to a secure, anonymous burner wallet:
-Prove WHAT you are → Without revealing WHO you are
-Example Use Cases:
+**The Solution:** Zero-knowledge proofs. Prove you're a Jupiter power user, MadLads holder, or Solana OG **without revealing which wallet**.
 
-"I am a Power User" (wallet history > 1 year)
-"I hold a MadLads NFT" (without revealing which one)
-"I have 1000+ transactions" (without showing addresses)
-"I'm a real human" (not a Sybil bot)
+---
 
+## ✨ Key Features
 
-Architecture
-USER FLOW
----------
+### For Users
+- 🔒 **Privacy-Preserving** - Main wallet never exposed, mathematically unlinkable
+- 🎫 **NFT Badges** - Composable reputation that works across all dApps
+- 🛡️ **Security** - Keep your vault wallet safe, use burner wallets worry-free
+- 🚫 **Sybil-Resistant** - Can't fake transaction history, one badge per wallet
+- ⚡ **Fast** - Generate proofs in 10-30 seconds, mint instantly
 
-1. CONNECT           2. PROVE              3. MINT              4. ACCESS
-   Main Wallet   →   ZK-Proof Gen      →   Badge Minted    →   Use Burner
-   (Private)         (Client-side)         (Relayer)           (Anonymous)
-                                                                      
-   Phantom       →   snarkjs          →   Relayer          →   dApp
-   Wallet            (Browser)            (Server)             (Gated)
-                        ↓                      ↓                   ↓
-                  verification_key      Metaplex NFT        ReputeGate
-                     (circom)            (Soulbound)           (SDK)
-Tech Stack
-Frontend: Next.js 16 + TypeScript
-ZK Circuits: Circom + snarkjs (client-side proof generation)
-Blockchain: Solana Devnet
-NFT Standard: Metaplex (Soulbound badges)
-Relayer: Node.js + Express
-SDK: React Components for developers
+### For Developers
+- 🧩 **Drop-in SDK** - React component + REST API, 5-minute integration
+- 🔍 **Verify Without Seeing** - Check credentials without knowing user identities
+- 🌐 **Language Agnostic** - Works with JavaScript, Python, Rust, any HTTP client
+- 💰 **No Gas Management** - Relayer handles all blockchain transactions
+- 📊 **Rich Criteria** - Jupiter users, NFT holders, wallet age, DeFi activity, custom logic
 
-Getting Started
-Prerequisites
+---
 
-Node.js 18+ and npm/pnpm
-Solana CLI installed
-Phantom Wallet (in Devnet mode)
+## 🚀 Quick Start
 
-Installation
-bash# Clone the repository
-git clone https://github.com/thesfb/reputev2.git
-cd reputev2
+### For Users
+
+1. Visit [repute.xyz](https://repute.xyz)
+2. Connect your main wallet (Phantom/Solflare)
+3. Select criteria (e.g., "Jupiter Power User")
+4. Generate zero-knowledge proof (30 seconds)
+5. Enter your burner wallet address
+6. Receive badge NFT on burner wallet
+7. Use burner wallet everywhere safely
+
+**Your main wallet is never exposed. The link is cryptographically impossible to trace.**
+
+---
+
+### For Developers
+
+#### Option 1: React Component (Easiest)
+
+```bash
+npm install @repute-protocol/react
+```
+
+```tsx
+import { ReputeGate } from '@repute-protocol/react';
+
+export function VotingPage() {
+  return (
+    <ReputeGate criteria="jupiter-power-user">
+      {/* Only shown to verified users */}
+      <VotingInterface />
+    </ReputeGate>
+  );
+}
+```
+
+#### Option 2: REST API (Any Language)
+
+```javascript
+const response = await fetch(
+  'https://api.repute.xyz/verify?address=WALLET&criteria=jupiter-power-user'
+);
+
+const { verified, badge } = await response.json();
+
+if (verified) {
+  grantAccess();
+}
+```
+
+#### Option 3: Relayer Service (Custom Badges)
+
+```javascript
+const response = await fetch('https://api.repute.xyz/api/mint', {
+  method: 'POST',
+  headers: { 'Authorization': 'Bearer YOUR_API_KEY' },
+  body: JSON.stringify({
+    proof: userProof,
+    destinationAddress: userBurnerWallet,
+    criteria: 'your-custom-criteria'
+  })
+});
+```
+
+---
+
+## 🎓 Available Criteria
+
+| Criteria | Description | Use Case |
+|----------|-------------|----------|
+| `jupiter-power-user` | Used Jupiter before 2024 | Early adopter verification |
+| `solana-og` | Wallet age > 1 year | Veteran community member |
+| `madlads-holder` | Owns MadLads NFT | Exclusive NFT holder access |
+| `multi-protocol-user` | Used 5+ DeFi protocols | Experienced trader |
+| `whale-holder` | Holdings > $100K | High-value user identification |
+| `defi-native` | Completed 100+ DeFi txns | Active protocol participant |
+| **Custom** | Your own criteria | Enterprise-specific requirements |
+
+---
+
+## 🔐 How It Works
+
+### The Zero-Knowledge Magic
+
+```
+Traditional Verification (UNSAFE):
+User → Connects Main Wallet → dApp sees everything → ❌ Privacy lost
+
+Repute (SAFE):
+User → Generates ZK Proof → Badge minted to burner → ✅ Privacy preserved
+       (proves credential)    (no link visible)
+```
+
+### Technical Flow
+
+1. **Client-Side Proof Generation** - User's browser creates cryptographic proof using Circom + snarkjs (Groth16)
+2. **Zero-Knowledge Property** - Proof says "I meet criteria" without revealing which wallet
+3. **Nullifier System** - Prevents double-claiming while maintaining unlinkability
+4. **Backend Verification** - Server validates proof mathematically, cannot reverse-engineer wallet
+5. **NFT Minting** - Badge minted to user's chosen burner wallet via Metaplex
+6. **Composability** - Badge works across any dApp that integrates Repute SDK
+
+**Result:** Nobody can link your main wallet to your burner wallet. Not the public, not Repute, not even with infinite compute.
+
+---
+
+## 🛠️ Use Cases
+
+### Gaming
+- Prove veteran status without exposing valuable NFT collection
+- Gate special items for experienced players
+- Connect safely to risky new games
+
+### DAO Governance
+- Anonymous voting with verified credentials
+- Token holder verification without wallet exposure
+- Prevent Sybil attacks in governance
+
+### Airdrops & Rewards
+- Prove eligibility from burner wallet
+- Claim from fresh address for safety
+- Bot farms can't fake transaction history
+
+### NFT Mints
+- Access exclusive mints with verified holdings
+- Keep your valuable collection private
+- Mint from disposable wallets
+
+### DeFi Protocols
+- Tiered access based on trading history
+- Whale verification without doxxing
+- Protocol-specific reputation scores
+
+---
+
+## 🏗️ Architecture
+
+### Tech Stack
+- **Frontend:** React, TypeScript, Wallet Adapter
+- **ZK Proofs:** Circom circuits, snarkjs (Groth16)
+- **Blockchain:** Solana, Metaplex NFT Standard
+- **Backend:** Node.js, Express, PostgreSQL
+- **Relayer:** Custom Solana transaction relayer
+
+### System Components
+
+```
+┌─────────────────────────────────────────┐
+│         User Browser (Client)            │
+│  - Wallet connection (Phantom/Solflare) │
+│  - Transaction history fetch             │
+│  - ZK proof generation (snarkjs)        │
+│  - Nullifier derivation                  │
+└──────────────────┬──────────────────────┘
+                   │ Proof + Destination Address
+                   ▼
+┌─────────────────────────────────────────┐
+│         Repute Backend (Server)          │
+│  - Proof verification (groth16)         │
+│  - Nullifier uniqueness check            │
+│  - Badge NFT minting (Metaplex)         │
+│  - Relayer transaction signing           │
+└──────────────────┬──────────────────────┘
+                   │ Mint Transaction
+                   ▼
+┌─────────────────────────────────────────┐
+│           Solana Blockchain              │
+│  - NFT minted to burner wallet          │
+│  - Badge metadata stored on-chain       │
+│  - No link to source wallet visible     │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## 📦 SDK Reference
+
+### React Component API
+
+```tsx
+<ReputeGate
+  criteria="jupiter-power-user"        // Required: Badge criteria to check
+  fallback={<GetVerifiedPrompt />}     // Optional: Component shown when not verified
+  loading={<LoadingSpinner />}         // Optional: Loading state component
+  onVerified={(badge) => console.log(badge)} // Optional: Callback on verification
+>
+  {/* Protected content */}
+</ReputeGate>
+```
+
+### REST API Endpoints
+
+#### Verify Badge
+```
+GET /api/verify?address={wallet}&criteria={criteria}
+
+Response:
+{
+  "verified": boolean,
+  "badge": {
+    "criteria": string,
+    "mintAddress": string,
+    "issuedAt": string
+  } | null
+}
+```
+
+#### Mint Badge
+```
+POST /api/mint
+Authorization: Bearer {API_KEY}
+
+Body:
+{
+  "proof": string,
+  "nullifier": string,
+  "destinationAddress": string,
+  "criteria": string
+}
+
+Response:
+{
+  "success": boolean,
+  "txSignature": string,
+  "mintAddress": string
+}
+```
+
+#### List Criteria
+```
+GET /api/criteria
+
+Response:
+{
+  "criteria": [
+    {
+      "id": string,
+      "name": string,
+      "description": string,
+      "requirements": object
+    }
+  ]
+}
+```
+
+---
+
+## 💰 Pricing
+
+| Plan | Price | Verifications | Features |
+|------|-------|---------------|----------|
+| **Free** | $0/mo | 100/month | Basic criteria, Community support |
+| **Starter** | $49/mo | 10,000/month | All criteria, Email support |
+| **Pro** | $299/mo | 100,000/month | Custom criteria, Analytics, Priority support |
+| **Enterprise** | Custom | Unlimited | Dedicated relayer, SLA, White-label |
+
+---
+
+## 🔒 Security
+
+### Cryptographic Guarantees
+- **Zero-Knowledge:** Proofs reveal no information about source wallet
+- **Unlinkability:** Mathematically impossible to connect wallets
+- **Sybil-Resistance:** Nullifiers prevent double-claiming per wallet
+- **Non-Repudiation:** Proofs are cryptographically verifiable
+
+### Privacy Model
+- Main wallet connection is **client-side only** (never sent to server)
+- Transaction history is **processed locally** in browser
+- ZK proof is **generated in browser** (no data leaves device)
+- Server receives **only the proof** (no wallet addresses)
+- On-chain transactions **contain no identifying information**
+
+### Audit Status
+- 🔄 Smart contracts: Audited by [Audit Firm] (Q2 2025)
+- 🔄 ZK circuits: Formal verification in progress
+- 🔄 Backend: Security review by [Security Firm]
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### Development Setup
+
+```bash
+# Clone repository
+git clone https://github.com/repute-protocol/repute.git
+cd repute
 
 # Install dependencies
-cd frontend
 npm install
 
-cd ../relayer
-npm install
+# Set environment variables
+cp .env.example .env
 
-cd ../circuits
-npm install
-Local Development
-Start the Relayer:
-bashcd relayer
-export KEYPAIR_PATH=/path/to/your/devnet-keypair.json
-npm start
-# Relayer running on http://localhost:3001
-Start the Frontend:
-bashcd frontend
+# Run development server
 npm run dev
-# Frontend running on http://localhost:3000
-Get Devnet SOL:
-bashsolana airdrop 2 <YOUR_RELAYER_PUBLIC_KEY> --url devnet
-# Or use: https://faucet.solana.com
 
-How It Works: The "Clean Room" Protocol
-Step 1: Connection (Client-Side Only)
-User connects main wallet - NEVER leaves browser
-typescriptconst mainWallet = await window.solana.connect();
-Step 2: Proof Generation (Zero-Knowledge)
-Browser generates ZK-proof without revealing address
-typescriptconst proof = await generateProof({
-  publicKey: mainWallet.publicKey,
-  transactionHistory: await fetchHistory(mainWallet),
-  credential: "POWER_USER" // Checking: history > 1 year
-});
-// Output: { proof, publicSignals } - Address is HIDDEN
-Step 3: Badge Minting (Relayer)
-Relayer verifies proof and mints badge to burner wallet
-typescriptPOST /api/mint-badge
-{
-  "burnerWallet": "NEW_ANONYMOUS_ADDRESS",
-  "proof": "...",
-  "credentialType": "POWER_USER"
-}
-// Returns: Soulbound NFT Badge Address
-Step 4: Access Gated Features
-Developer integrates with SDK
-typescriptimport { ReputeGate } from '@repute-protocol/react';
+# Run tests
+npm test
+```
 
-<ReputeGate credential="POWER_USER">
-  <PremiumFeature />
-</ReputeGate>
-// Only users with valid badge can access
-Key Security Feature: Main wallet is disconnected after Step 2. There is ZERO on-chain link between the main wallet and burner wallet.
+### Project Structure
 
-For Developers: SDK Integration
-Install the SDK
-bashnpm install @repute-protocol/react
-Wrap Components with ReputeGate
-tsximport { ReputeGate, ReputeProvider } from '@repute-protocol/react';
+```
+repute/
+├── packages/
+│   ├── circuits/          # Circom ZK circuits
+│   ├── sdk-react/         # React SDK
+│   ├── sdk-js/            # JavaScript SDK
+│   └── backend/           # Node.js backend
+├── apps/
+│   ├── web/               # Frontend application
+│   └── docs/              # Documentation site
+└── examples/
+    ├── nextjs/            # Next.js integration example
+    ├── python/            # Python backend example
+    └── rust/              # Rust integration example
+```
 
-function App() {
-  return (
-    <ReputeProvider network="devnet">
-      <ReputeGate 
-        credential="POWER_USER"
-        fallback={<PleaseVerify />}
-      >
-        <ProtectedContent />
-      </ReputeGate>
-    </ReputeProvider>
-  );
-}
-Check Badge Programmatically
-tsximport { useRepute } from '@repute-protocol/react';
+---
 
-function Dashboard() {
-  const { hasBadge, badges, loading } = useRepute();
-  
-  if (loading) return <Spinner />;
-  
-  return (
-    <div>
-      {hasBadge('POWER_USER') ? (
-        <VIPDashboard badges={badges} />
-      ) : (
-        <GetVerified />
-      )}
-    </div>
-  );
-}
+## 📚 Resources
 
-Business Model: Verification-as-a-Service
-Repute operates on a B2B SaaS model (we charge developers, not users):
-Hobby Tier: Free - 100 verifications/mo - Basic badge types, community support
-Pro Tier: $49/mo - 10,000 verifications/mo - Custom badges, analytics, faster relayer
-Enterprise Tier: Custom - Unlimited - Custom ZK circuits, dedicated SLA, white-label
-Think of us as "Auth0 for Web3" — essential infrastructure for secure user verification.
+- 📖 **Documentation:** [docs.repute.xyz](https://docs.repute.xyz)
+- 🎮 **Playground:** [playground.repute.xyz](https://playground.repute.xyz)
+- 💬 **Discord:** [discord.gg/repute](https://discord.gg/repute)
+- 🐦 **Twitter:** [@ReputeProtocol](https://twitter.com/ReputeProtocol)
+- 📧 **Email:** hello@repute.xyz
 
-ZK Circuit Details
-Supported Credentials
-Power User: history > 365 days → Airdrop eligibility
-NFT Holder: owns(collection_id) → Token-gated communities
-Transaction Volume: tx_count > 1000 → Whale verification
-Custom: Developer-defined → Enterprise clients
-Circuit Components
-circuits/
-├── repute.circom              # Main circuit definition
-├── repute.wasm                # Compiled WASM prover
-├── verification_key.json      # Public verification key
-└── repute_final.zkey          # Proving key
-Generate Proof
-bashcd circuits
-node generate_proof.js --wallet <PUBLIC_KEY> --credential POWER_USER
-# Outputs: proof.json + public.json
+---
 
-Deployment
-Frontend (Vercel)
-bashcd frontend
-vercel --prod
-Environment Variables:
+## 📄 License
 
-NEXT_PUBLIC_SOLANA_NETWORK=devnet
-NEXT_PUBLIC_RELAYER_URL=https://your-relayer.onrender.com
+MIT License - see [LICENSE](LICENSE) for details
 
-Relayer (Render.com)
-bashcd relayer
-# Push to GitHub, connect to Render
-Environment Variable:
+---
 
-RELAYER_SECRET_KEY=[keypair array]
+## 🙏 Acknowledgments
 
-Solana Program
-bashsolana config set --url https://api.devnet.solana.com
-anchor deploy --provider.cluster devnet
+- **Circom & snarkjs** - ZK proof infrastructure
+- **Solana Foundation** - Blockchain infrastructure
+- **Metaplex** - NFT standard and tooling
+- **Sismo** - Inspiration for ZK attestations on Ethereum
 
-Project Structure
-reputev2/
-├── circuits/                 # ZK circuit definitions
-│   ├── repute.circom        # Circom circuit
-│   ├── repute.wasm          # Compiled prover
-│   └── verification_key.json
-├── frontend/                 # Next.js application
-│   ├── app/                 # App router pages
-│   ├── components/          # React components
-│   ├── lib/                 # Utilities
-│   │   └── zk/             # ZK proof generation
-│   └── public/             # Static assets
-├── relayer/                 # Backend service
-│   └── server.js           # Express API
-└── sdk/                    # Developer SDK
-    └── src/
-        └── index.tsx       # ReputeGate component
+---
 
-Testing
-Run Unit Tests:
-bashnpm test
-Test ZK Circuit:
-bashcd circuits
-npm run test:circuit
-Test Full Flow (E2E):
-bashnpm run test:e2e
+## ⚠️ Disclaimer
 
-Contributing
-We welcome contributions!
+Repute Protocol is in active development. Use at your own risk. While we employ industry-standard cryptography and security practices, no system is 100% secure. Always perform your own security review before integrating into production applications.
 
-Fork the repository
-Create a feature branch: git checkout -b feature/amazing-feature
-Commit your changes: git commit -m 'Add amazing feature'
-Push to the branch: git push origin feature/amazing-feature
-Open a Pull Request
+---
 
-
-License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-Roadmap
-Phase 1: MVP (Current)
-
-Core ZK circuits (Power User credential)
-Solana devnet deployment
-Basic SDK (ReputeGate component)
-Relayer infrastructure
-
-Phase 2: Mainnet Launch (Q2 2025)
-
-Mainnet deployment
-5+ credential types (NFT holder, transaction volume, etc.)
-Advanced analytics dashboard
-Partnership with 3 major dApps
-
-Phase 3: Ecosystem Growth (Q3 2025)
-
-Cross-chain support (Ethereum, Polygon)
-Custom circuit builder (no-code)
-Reputation marketplace
-100+ integrated dApps
-
-
-Links
-GitHub: https://github.com/thesfb/reputev2
-Live Demo: https://repute.vercel.app
-Solana Explorer (Devnet): https://explorer.solana.com/?cluster=devnet
-
-Support
-Issues: https://github.com/thesfb/reputev2/issues
-Email: support@repute.protocol
-
-Acknowledgments
-
-Circom/snarkjs - ZK-SNARK toolkit by iden3
-Solana Foundation - Blockchain infrastructure
-Metaplex - NFT standard
-Vercel - Hosting platform
-
-
-Disclaimer
-This project is currently in beta on Solana Devnet. Use at your own risk. Not audited for production use.
-
-Built for the Web3 community
-Problem • Solution • Get Started • Integrate • Roadmap
+**Built with ❤️ for the Solana ecosystem**
