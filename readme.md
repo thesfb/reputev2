@@ -1,4 +1,4 @@
-# 🛡️ Repute Protocol
+ # 🛡️ Repute Protocol
 
 **Zero-Knowledge Reputation System for Solana**
 
@@ -42,13 +42,13 @@ Repute is a privacy-first reputation protocol that lets users prove credentials 
 
 ### For Users
 
-1. Visit [repute.xyz](https://repute.xyz)
-2. Connect your main wallet (Phantom/Solflare)
-3. Select criteria (e.g., "Jupiter Power User")
-4. Generate zero-knowledge proof (30 seconds)
-5. Enter your burner wallet address
-6. Receive badge NFT on burner wallet
-7. Use burner wallet everywhere safely
+
+1. Connect your main wallet (Phantom/Solflare)
+2. Select criteria (e.g., "Jupiter Power User")
+3. Generate zero-knowledge proof (30 seconds)
+4. Enter your burner wallet address
+5. Receive badge NFT on burner wallet
+6. Use burner wallet everywhere safely
 
 **Your main wallet is never exposed. The link is cryptographically impossible to trace.**
 
