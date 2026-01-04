@@ -13,7 +13,7 @@ import vKey from "@/lib/zk/verification_key.json";
 const USED_NULLIFIERS = new Set<string>();   
 
 // Ensure this matches your uploaded Metadata URL
-const METADATA_URI = "https://raw.githubusercontent.com/thesfb/reputev2/refs/heads/main/frontend/metadata.json";
+const METADATA_URI = "https://raw.githubusercontent.com/thesfb/repute-assets/main/metadata.json";
 
 export async function POST(req: Request) {
   console.log("------------------------------------------");
