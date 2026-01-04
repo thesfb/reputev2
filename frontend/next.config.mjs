@@ -4,10 +4,8 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // 2. Disable ESLint checks during build (THIS IS THE FIX)
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // REMOVED: eslint block is no longer supported in next.config.mjs
+  
   images: {
     unoptimized: true,
   },
